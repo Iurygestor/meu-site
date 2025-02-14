@@ -113,12 +113,18 @@
             novoItem.classList.add("history-item");
             novoItem.innerHTML = `
                 <h4>Cliente: ${nomeCliente} (${numeroCliente}) - Corretor: ${corretor.toUpperCase()}</h4>
-                <p><strong>Valor Inserido:</strong> R$${valorEntrada.toFixed(2)}</p>
-                <p><strong>Valor Total Liberado:</strong> R$${detalhesEntrada.valorTotalLiberado.toFixed(2)}</p>
-                <p><strong>Valor após desconto:</strong> R$${detalhesEntrada.valorMenos87Porcento.toFixed(2)}</p>
-                <p><strong>Valor Máximo:</strong> R$${valorMaximo.toFixed(2)}</p>
-                <p><strong>Valor Total Liberado:</strong> R$${detalhesMaximo.valorTotalLiberado.toFixed(2)}</p>
-                <p><strong>Valor após desconto:</strong> R$${detalhesMaximo.valorMenos87Porcento.toFixed(2)}</p>
+                <div style="border-bottom: 1px solid #ddd; margin-bottom: 10px; padding-bottom: 10px;">
+                    <h5>Simulação - Valor de Entrada</h5>
+                    <p><strong>Valor Inserido:</strong> R$${valorEntrada.toFixed(2)}</p>
+                    <p><strong>Valor Total Liberado:</strong> R$${detalhesEntrada.valorTotalLiberado.toFixed(2)}</p>
+                    <p><strong>Valor após desconto:</strong> R$${detalhesEntrada.valorMenos87Porcento.toFixed(2)}</p>
+                </div>
+                <div>
+                    <h5>Simulação - Valor Máximo</h5>
+                    <p><strong>Valor Máximo:</strong> R$${valorMaximo.toFixed(2)}</p>
+                    <p><strong>Valor Total Liberado:</strong> R$${detalhesMaximo.valorTotalLiberado.toFixed(2)}</p>
+                    <p><strong>Valor após desconto:</strong> R$${detalhesMaximo.valorMenos87Porcento.toFixed(2)}</p>
+                </div>
             `;
             historicoDiv.prepend(novoItem);
         }
