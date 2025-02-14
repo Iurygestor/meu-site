@@ -110,41 +110,20 @@
             const detalhesEntrada = calcularDetalhes(valorEntrada);
             const detalhesMaximo = calcularDetalhes(valorMaximo);
 
+            const cores = {
+                gustavo: "blue",
+                bianca: "pink",
+                lucas: "lightgray",
+                duda: "cyan",
+                iury: "green"
+            };
+
             const historicoDiv = document.getElementById("historico");
             const novoItem = document.createElement("div");
             novoItem.classList.add("history-item");
+            novoItem.style.borderColor = cores[corretor]; // Aplicando a cor ao corretor
             novoItem.innerHTML = `
-                <h4>Cliente: ${nomeCliente} (${numeroCliente}) - Corretor: ${corretor.toUpperCase()}</h4>
+                <h4 style="color:${cores[corretor]}">Cliente: ${nomeCliente} (${numeroCliente}) - Corretor: ${corretor.toUpperCase()}</h4>
                 <div style="border-bottom: 1px solid #ddd; margin-bottom: 10px; padding-bottom: 10px;">
                     <h5>Simulação - Valor de Entrada</h5>
-                    <p><strong>Valor Inserido:</strong> R$${valorEntrada.toFixed(2)}</p>
-                    <p><strong>Valor Total Liberado:</strong> R$${detalhesEntrada.valorTotalLiberado.toFixed(2)}</p>
-                    <p><strong>Valor após desconto:</strong> R$${detalhesEntrada.valorMenos87Porcento.toFixed(2)}</p>
-                </div>
-                <div>
-                    <h5>Simulação - Valor Máximo</h5>
-                    <p><strong>Valor Máximo:</strong> R$${valorMaximo.toFixed(2)}</p>
-                    <p><strong>Valor Total Liberado:</strong> R$${detalhesMaximo.valorTotalLiberado.toFixed(2)}</p>
-                    <p><strong>Valor após desconto:</strong> R$${detalhesMaximo.valorMenos87Porcento.toFixed(2)}</p>
-                </div>
-            `;
-            historicoDiv.prepend(novoItem);
-        }
-
-        function baixarHistorico() {
-            let historicoText = "Histórico de Simulações:\n\n";
-            document.querySelectorAll(".history-item").forEach(item => {
-                historicoText += item.innerText + "\n----------------------\n";
-            });
-
-            const blob = new Blob([historicoText], { type: "text/plain" });
-            const link = document.createElement("a");
-            link.href = URL.createObjectURL(blob);
-            link.download = "historico_propostas.txt";
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        }
-    </script>
-</body>
-</html>
+                    <p><strong>Valor Inserido:</strong> R$${valorEntrada.toFi
