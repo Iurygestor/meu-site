@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulação de Proposta</title>
+	<link rel="icon" type="image/jpeg" href="https://i.imgur.com/3sK8J6I.jpeg">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .container {
+            max-width: 500px;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        input, select, button {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #007BFF;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #007BFF;
+            border-radius: 4px;
+            background-color: #f0f8ff;
+        }
+        .history {
+            margin-top: 30px;
+            border-top: 1px solid #ddd;
+            padding-top: 20px;
+        }
+        .history h3 {
+            margin-bottom: 15px;
+        }
+        .history-item {
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 10px;
+        }
+        .proposal {
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+        .gustavo { background-color: #ffcccc; }
+        .bianca { background-color: #ccffcc; }
+        .lucas { background-color: #ccccff; }
+        .duda { background-color: #ffffcc; }
+        .iury { background-color: #ffccff; }
+    </style>
+</head>
+<body>
+	<img src="https://i.imgur.com/3sK8J6I.jpeg" alt="Imagem do topo" style="width: 200px; height: auto; display: block; margin: 0 auto 20px; border-radius: 8px;">
+    <div class="container">
+        <h2>Simulação de Proposta</h2>
+        <form id="simulacao-form">
+            <label for="nomeCliente">Nome do Cliente:</label>
+            <input type="text" id="nomeCliente" required placeholder="Insira o nome do cliente">
+            
+            <label for="numeroCliente">Número do Cliente (somente números):</label>
+            <input type="text" id="numeroCliente" required placeholder="Insira o número do cliente">
+
+            <label for="corretor">Corretor:</label>
+            <select id="corretor">
+                <option value="Selecione">Selecione</option>
+                <option value="gustavo">Gustavo</option>
+                <option value="bianca">Bianca</option>
+                <option value="lucas">Lucas</option>
+                <option value="duda">Duda</option>
+                <option value="iury">Iury</option>
+            </select>
+
+            <label for="valorEntrada">Valor de Entrada (somente números):</label>
+            <input type="number" id="valorEntrada" required step="any" min="0" placeholder="Insira o valor de entrada">
+
+            <label for="valorMaximo">Valor Máximo de Entrada (somente números):</label>
+            <input type="number" id="valorMaximo" required step="any" min="0" placeholder="Insira o valor máximo de entrada">
+
+            <button type="button" onclick="calcular()">Calcular</button>
+        </form>
+        <div class="history">
+            <h3>Histórico de Simulações</h3>
+            <div id="historico"></div>
+        </div>
+    </div>
+
+    <script>
+        function calcular() {
+            const nomeCliente = document.getElementById("nomeCliente").value.trim();
+            const numeroCliente = document.getElementById("numeroCliente").value.trim();
+            const corretor = document.getElementById("corretor").value;
+            const valorEntrada = parseFloat(document.getElementById("valorEntrada").value);
+            const valorMaximo = parseFloat(document.getElementById("valorMaximo").value);
+
+            if (!nomeCliente || !numeroCliente || isNaN(valorEntrada) || isNaN(valorMaximo) || valorMaximo < valorEntrada) {
+                alert("Por favor, preencha todos os campos corretamente.");
+                return;
+            }
+
+            function calcularDetalhes(valor) {
+                const valorTotalLiberado = valor / 0.04392;
+                const valorMenos87Porcento = valor * 0.13;
+                return { valorTotalLiberado, valorMenos87Porcento };
+            }
+
+            const detalhesEntrada = calcularDetalhes(valorEntrada);
+            const detalhesMaximo = calcularDetalhes(valorMaximo);
+
+            const propostaEntrada = `
+                <div class="proposal ${corretor}">
+                    <h4>Proposta - Valor de Entrada</h4>
+                    <p><strong>Valor Inserido:</strong> R$${valorEntrada.toFixed(2)}</p>
+                    <p><strong>Valor Total Liberado:</strong> R$${detalhesEntrada.valorTotalLiberado.toFixed(2)}</p>
+                    <p><strong>Valor após descontar 87%:</strong> R$${detalhesEntrada.valorMenos87Porcento.toFixed(2)}</p>
+                </div>
+            `;
+
+            const propostaMaxima = `
+                <div class="proposal ${corretor}">
+                    <h4>Proposta - Valor Máximo</h4>
+                    <p><strong>Valor Máximo:</strong> R$${valorMaximo.toFixed(2)}</p>
+                    <p><strong>Valor Total Liberado:</strong> R$${detalhesMaximo.valorTotalLiberado.toFixed(2)}</p>
+                    <p><strong>Valor após descontar 87%:</strong> R$${detalhesMaximo.valorMenos87Porcento.toFixed(2)}</p>
+                </div>
+            `;
+
+            const historicoDiv = document.getElementById("historico");
+            const novoItem = document.createElement("div");
+            novoItem.classList.add("history-item");
+            novoItem.innerHTML = `<h4>Cliente: ${nomeCliente} (${numeroCliente}) - Corretor: ${corretor.toUpperCase()}</h4>${propostaEntrada}${propostaMaxima}`;
+            historicoDiv.prepend(novoItem);
+        }
+    </script>
+	<p>14/02/2025 IURY BARRETO SALES</p>
+</body>
+</html>
