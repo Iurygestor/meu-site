@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Simulação de Proposta</title>
-	<link rel="icon" type="image/jpeg" href="https://i.imgur.com/3sK8J6I.jpeg">
+    <link rel="icon" type="image/jpeg" href="https://i.imgur.com/3sK8J6I.jpeg">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -52,7 +52,7 @@
     </style>
 </head>
 <body>
-	<img src="https://i.imgur.com/3sK8J6I.jpeg" alt="Imagem do topo" style="width: 200px; height: auto; display: block; margin: 0 auto 20px; border-radius: 8px;">
+    <img src="https://i.imgur.com/3sK8J6I.jpeg" alt="Imagem do topo" style="width: 200px; height: auto; display: block; margin: 0 auto 20px; border-radius: 8px;">
     <div class="container">
         <h2>Simulação de Proposta</h2>
         <form id="simulacao-form">
@@ -64,7 +64,7 @@
 
             <label for="corretor">Corretor:</label>
             <select id="corretor">
-		<option value="Selecionar">Selecionar</option>
+                <option value="Selecionar">Selecionar</option>
                 <option value="gustavo">Gustavo</option>
                 <option value="bianca">Bianca</option>
                 <option value="lucas">Lucas</option>
@@ -84,11 +84,15 @@
         <div class="history">
             <h3>Histórico de Simulações</h3>
             <button onclick="baixarHistorico()">Baixar Histórico</button>
+            <button onclick="limparHistorico()" style="margin-top: 10px;">Limpar Histórico</button>
+            <button onclick="verHistorico()" style="margin-top: 10px;">Ver Histórico</button>
             <div id="historico"></div>
         </div>
     </div>
 
     <script>
+        document.addEventListener("DOMContentLoaded", carregarHistorico);
+
         function calcular() {
             const nomeCliente = document.getElementById("nomeCliente").value.trim();
             const numeroCliente = document.getElementById("numeroCliente").value.trim();
@@ -110,49 +114,68 @@
             const detalhesEntrada = calcularDetalhes(valorEntrada);
             const detalhesMaximo = calcularDetalhes(valorMaximo);
 
-            const cores = {
-                gustavo: "blue",
-                bianca: "pink",
-                lucas: "lightgray",
-                duda: "cyan",
-                iury: "green"
-            };
-
-            const historicoDiv = document.getElementById("historico");
-            const novoItem = document.createElement("div");
-            novoItem.classList.add("history-item");
-            novoItem.style.borderColor = cores[corretor]; // Aplicando a cor ao corretor
-            novoItem.innerHTML = `
-                <h4 style="color:${cores[corretor]}">Cliente: ${nomeCliente} (${numeroCliente}) - Corretor: ${corretor.toUpperCase()}</h4>
-                <div style="border-bottom: 1px solid #ddd; margin-bottom: 10px; padding-bottom: 10px;">
-                    <h5>Simulação - Valor de Entrada</h5>
-                    <p><strong>Valor Inserido:</strong> R$${valorEntrada.toFixed(2)}</p>
-                    <p><strong>Valor Total Liberado:</strong> R$${detalhesEntrada.valorTotalLiberado.toFixed(2)}</p>
-                    <p><strong>Valor após desconto:</strong> R$${detalhesEntrada.valorMenos87Porcento.toFixed(2)}</p>
-                </div>
-                <div>
-                    <h5>Simulação - Valor Máximo</h5>
-                    <p><strong>Valor Máximo:</strong> R$${valorMaximo.toFixed(2)}</p>
-                    <p><strong>Valor Total Liberado:</strong> R$${detalhesMaximo.valorTotalLiberado.toFixed(2)}</p>
-                    <p><strong>Valor após desconto:</strong> R$${detalhesMaximo.valorMenos87Porcento.toFixed(2)}</p>
-                </div>
-            `;
-            historicoDiv.prepend(novoItem);
+            const simulacao = { nomeCliente, numeroCliente, corretor, valorEntrada, valorMaximo, detalhesEntrada, detalhesMaximo };
+            
+            salvarHistorico(simulacao);
+            carregarHistorico();
         }
 
-        function baixarHistorico() {
-            let historicoText = "Histórico de Simulações:\n\n";
-            document.querySelectorAll(".history-item").forEach(item => {
-                historicoText += item.innerText + "\n----------------------\n";
-            });
+        function salvarHistorico(simulacao) {
+            let historico = JSON.parse(localStorage.getItem("historicoSimulacoes")) || [];
+            historico.push(simulacao);
+            localStorage.setItem("historicoSimulacoes", JSON.stringify(historico));
+        }
 
-            const blob = new Blob([historicoText], { type: "text/plain" });
-            const link = document.createElement("a");
-            link.href = URL.createObjectURL(blob);
-            link.download = "historico_propostas.txt";
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+        function carregarHistorico() {
+            document.getElementById("historico").innerHTML = "";
+            verHistorico();
+        }
+
+        function verHistorico() {
+            const historicoDiv = document.getElementById("historico");
+            historicoDiv.innerHTML = "";
+
+            let historico = JSON.parse(localStorage.getItem("historicoSimulacoes")) || [];
+
+            if (historico.length === 0) {
+                historicoDiv.innerHTML = "<p>Nenhum histórico disponível.</p>";
+                return;
+            }
+
+            historico.forEach(simulacao => {
+                const cores = {
+                    gustavo: "blue",
+                    bianca: "pink",
+                    lucas: "lightgray",
+                    duda: "cyan",
+                    iury: "green"
+                };
+
+                const novoItem = document.createElement("div");
+                novoItem.classList.add("history-item");
+                novoItem.style.borderColor = cores[simulacao.corretor] || "black";
+                novoItem.innerHTML = `
+                    <h4 style="color:${cores[simulacao.corretor]}">Cliente: ${simulacao.nomeCliente} (${simulacao.numeroCliente}) - Corretor: ${simulacao.corretor.toUpperCase()}</h4>
+                    <div style="border-bottom: 1px solid #ddd; margin-bottom: 10px; padding-bottom: 10px;">
+                        <h5>Simulação - Valor de Entrada</h5>
+                        <p><strong>Valor Inserido:</strong> R$${simulacao.valorEntrada.toFixed(2)}</p>
+                        <p><strong>Valor Total Liberado:</strong> R$${simulacao.detalhesEntrada.valorTotalLiberado.toFixed(2)}</p>
+                        <p><strong>Valor após desconto:</strong> R$${simulacao.detalhesEntrada.valorMenos87Porcento.toFixed(2)}</p>
+                    </div>
+                    <div>
+                        <h5>Simulação - Valor Máximo</h5>
+                        <p><strong>Valor Máximo:</strong> R$${simulacao.valorMaximo.toFixed(2)}</p>
+                        <p><strong>Valor Total Liberado:</strong> R$${simulacao.detalhesMaximo.valorTotalLiberado.toFixed(2)}</p>
+                        <p><strong>Valor após desconto:</strong> R$${simulacao.detalhesMaximo.valorMenos87Porcento.toFixed(2)}</p>
+                    </div>
+                `;
+                historicoDiv.prepend(novoItem);
+            });
+        }
+
+        function limparHistorico() {
+            localStorage.removeItem("historicoSimulacoes");
+            document.getElementById("historico").innerHTML = "<p>Histórico apagado.</p>";
         }
     </script>
 </body>
